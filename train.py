@@ -7,7 +7,8 @@ import json
 import os
 from tqdm import tqdm, trange
 import h5py
-from prettytable import PrettyTable
+# from prettytable import PrettyTable
+from tabulate import tabulate
 
 from fcsn import FCSN
 import eval
@@ -98,10 +99,12 @@ class Solver(object):
         self.model.eval()
         out_dict = {}
         eval_arr = []
-        table = PrettyTable()
-        table.title = 'Eval result of epoch {}'.format(epoch_i)
-        table.field_names = ['ID', 'Precision', 'Recall', 'F-score']
-        table.float_format = '1.3'
+        # table = PrettyTable()
+        table = []
+        # table_headers = 'Eval result of epoch {}'.format(epoch_i)
+        # table.field_names = ['ID', 'Precision', 'Recall', 'F-score']
+        table_headers = ['ID', 'Precision', 'Recall', 'F-score']
+        # table.float_format = '1.3'
 
         with h5py.File(self.config.data_path) as data_file:
             for feature, label, idx in tqdm(self.test_dataset, desc='Evaluate', ncols=80, leave=False):
@@ -116,7 +119,7 @@ class Solver(object):
                 eval_res = np.mean(eval_res, axis=0).tolist()
 
                 eval_arr.append(eval_res)
-                table.add_row([idx] + eval_res)
+                table.append([idx] + eval_res)
 
                 out_dict[idx] = {
                     'pred_score': pred_score, 
@@ -128,7 +131,8 @@ class Solver(object):
             tqdm.write('Save score at {}'.format(str(score_save_path)))
             json.dump(out_dict, f)
         eval_mean = np.mean(eval_arr, axis=0).tolist()
-        table.add_row(['mean']+eval_mean)
+        table.append(['mean']+eval_mean)
+        print('\n',tabulate(table,headers=table_headers))
         tqdm.write(str(table))
 
 

@@ -6,7 +6,7 @@ class Config():
     def __init__(self, **kwargs):
 
         # Path
-        self.data_path = '../data/fcsn_tvsum.h5'
+        self.data_path = 'data/fcsn_tvsum.h5'
         self.save_dir = 'save_dir'
         self.score_dir = 'score_dir'
         self.log_dir = 'log_dir'
@@ -18,7 +18,7 @@ class Config():
         self.n_class = 2
         self.lr = 1e-3
         self.momentum = 0.9
-        self.batch_size = 5
+        self.batch_size = 1
 
         for k, v in kwargs.items():
             setattr(self, k, v)
